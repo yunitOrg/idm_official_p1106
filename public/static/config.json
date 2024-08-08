@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "lasttime": "2024-04-117 09:38:08",
+  "author": "申龙",
+  "className": "official",
+  "module": [
+    {
+      "classId": "idm.componet.official.itreeShow",
+      "comName": "树形展示",
+      "className": "ItreeShow",
+      "comType": "common",
+      "comLangue": "vue"
+    }
+  ]
+}
