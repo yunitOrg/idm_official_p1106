@@ -20,6 +20,7 @@ import 'ant-design-vue/lib/checkbox/style/css';
 import 'ant-design-vue/lib/message/style/css';
 import 'ant-design-vue/lib/radio/style/css';
 import 'ant-design-vue/lib/drawer/style/css';
+import 'ant-design-vue/lib/tree/style/css';
 
 
 import {
@@ -46,6 +47,7 @@ import {
     Checkbox,
     Radio,
     Drawer,
+    Tree,
 } from 'ant-design-vue'
 
 Vue.use(Input)
@@ -70,4 +72,5 @@ Vue.use(Row);
 Vue.use(Checkbox);
 Vue.use(Radio);
 Vue.use(Drawer);
+Vue.use(Tree);
 Vue.prototype.$message = message;

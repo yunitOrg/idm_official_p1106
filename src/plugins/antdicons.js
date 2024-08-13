@@ -97,3 +97,9 @@ export {
 export {
   default as ClockCircleFill
 }from '@ant-design/icons/lib/fill/ClockCircleFill'
+export {
+  default as MinusSquareFill
+}from '@ant-design/icons/lib/fill/MinusSquareFill'
+export {
+  default as PlusSquareFill
+}from '@ant-design/icons/lib/fill/PlusSquareFill'

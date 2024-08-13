@@ -15,11 +15,168 @@
           "desc": ""
       },
       {
-          "type": "group",
-          "text": "内层样式",
-          "desc": "点击？查看样式设置用法指南",
-          "helpUrl": "",
-          "children": []
+        "type": "group",
+        "text": "基本属性",
+        "desc": "提供设置组件能达到展示效果的基本属性设置信息",
+        "children": [
+            {
+                "type": "select",
+                "layoutType": "inline",
+                "text": "首次默认",
+                "desc": "初始默认选中方式：提供三种方式 1：无 2：默认第一个 3：默认key 只能默认一个",
+                "bindKey": "chooseStyle",
+                "dictionary": [
+                  {
+                    "label": "无",
+                    "value": "none"
+                  },
+                  {
+                    "label": "默认第一个",
+                    "value": "first"
+                  },
+                  {
+                    "label": "默认key",
+                    "value": "key"
+                  }
+                ],
+                "default": "first"
+              },
+              {
+                "type": "input",
+                "layoutType": "inline",
+                "text": "默认key",
+                "desc": "默认选中的key 例子：['0-0']",
+                "bindKey": "defaultKey",
+                "display": "@[chooseStyle=='key']"
+              },
+            {
+                "type": "switch",
+                "layoutType": "inline",
+                "text": "显示数字",
+                "bindKey": "showNum",
+                "default": true
+            }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "外层样式",
+        "desc": "点击？查看样式设置用法指南",
+        "helpUrl": "",
+        "children": [
+            {
+              "type": "inlineGroup",
+              "text": "宽高",
+              "children": [
+                {
+                  "type": "input",
+                  "layoutType": "block",
+                  "text": "宽",
+                  "desc": "填写auto则为自适应，或者使用px、%、vw等单位，比如100%、100px、100vw等等",
+                  "bindKey": "width",
+                  "width": "60px",
+                  "default": "300px"
+                },
+                {
+                  "type": "input",
+                  "layoutType": "block",
+                  "text": "高",
+                  "desc": "填写auto则为自适应，或者使用px、%、vh等单位，比如100%、100px、100vh等等",
+                  "bindKey": "height",
+                  "width": "60px",
+                  "default": "auto"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layoutType": "block",
+              "text": "内外边距",
+              "bindKey": "ulbox"
+            },
+            {
+              "type": "colorPicker",
+              "layoutType": "inline",
+              "text": "背景色",
+              "bindKey": "bgColor",
+              "placeholder": "请选择颜色",
+              "default": {
+                  "hex": "#ffffff",
+                  "hex8": "#ffffff"
+              }
+            },
+            {
+              "type": "input",
+              "layoutType": "inline",
+              "text": "容器阴影",
+              "bindKey": "boxShadow",
+              "default": ""
+            },
+            {
+              "type": "border",
+              "layoutType": "block",
+              "text": "边框",
+              "bindKey": "boxborder"
+            }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "高级",
+        "desc": "点击？查看高级设置用法指南",
+        "children": [
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "接口拦截",
+            "desc": "适用于搜索项很多减少接口次数，获取到所有搜索项才调用接口 参数为{_this: this, params: 接口参数}",
+            "bindKey": "handleInterfaceFlag",
+            "multiple": false
+          },
+          {
+            "type": "dataSourceSelect",
+            "layoutType": "inline",
+            "text": "数据源",
+            "desc": "内容数据源 数据源格式：[{title: '发文', value: '1', num: 1, children: [{title: '党组', value: '2', num: 2}]}]",
+            "bindKey": "contentDataSource"
+          },
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "点击树节点触发",
+            "desc": "可以处理当前节点的数据，点击会触发消息linkageResult， 参数为{_this: this, params: nodeItem}",
+            "bindKey": "handleClickTreeNode",
+            "multiple": false
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "字段设置",
+        "desc": "页面数据绑定",
+        "children": [
+            {
+                "type": "dataSourceFiledSelect",
+                "layoutType": "inline",
+                "text": "tree的key",
+                "bindKey": "treeKeyField",
+                "default": "key"
+            },
+          {
+            "type": "dataSourceFiledSelect",
+            "layoutType": "inline",
+            "text": "标题",
+            "bindKey": "treeTileField",
+            "default": "title"
+          },
+          {
+            "type": "dataSourceFiledSelect",
+            "layoutType": "inline",
+            "text": "数字",
+            "bindKey": "treeNumField",
+            "default": "num"
+          }
+        ]
       }
   ]
 }
