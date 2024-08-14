@@ -122,6 +122,29 @@
       },
       {
         "type": "group",
+        "text": "联动组件",
+        "desc": "当选择的数据有变动会联动这里选择的组件，把当前选中的对象传递给这些组件",
+        "children": [
+            {
+                "type": "pageModuleSelect",
+                "layoutType": "block",
+                "text": "需求组件范围",
+                "desc": "发送消息linkageDemand",
+                "bindKey": "linkageDemandPageModule",
+                "multiple": true
+            },
+            {
+                "type": "pageModuleSelect",
+                "layoutType": "block",
+                "text": "结果组件范围",
+                "desc": "当前选项变更需要联动其他组件变更结果值的组件范围：linkageResult",
+                "bindKey": "linkageResultPageModule",
+                "multiple": true
+            }
+        ]
+    },
+      {
+        "type": "group",
         "text": "高级",
         "desc": "点击？查看高级设置用法指南",
         "children": [

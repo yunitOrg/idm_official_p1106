@@ -136,7 +136,7 @@ module.exports = {
         extensions: ['.js', '.vue', '.json'],
         alias: {
           //按需引入ant design的图标，防止打包文件过大，如果使用ant design vue请放开此注释
-          // '@ant-design/icons/lib/dist$': resolve('src/plugins/antdicons.js')
+          '@ant-design/icons/lib/dist$': resolve('src/plugins/antdicons.js')
         }
       }
     },
@@ -164,7 +164,7 @@ module.exports = {
     devServer: {
         proxy: {
             '^/DreamWeb/*': {
-                target: "http://39.165.213.227:22001",
+                target: "http://10.1.1.106:30110",
                 changeOrigin: true,
                 pathRewrite: {
                   '^DreamWeb/': 'DreamWeb/'

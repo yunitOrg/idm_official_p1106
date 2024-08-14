@@ -13,17 +13,19 @@
     <div class="itreeShow">
       <template v-if="treeShow">
         <a-tree
-          :show-line="true"
-          :show-icon="false"
+          :showLine="true"
+          :showIcon="true"
           :treeData="treeData"
+          :replaceFields="{children: 'children', key: propData.treeKeyField, title: propData.treeTileField}"
           :defaultSelectedKeys="defaultSelectedKeys"
           :defaultExpandAll="true"
           :key="getKey"
           @select="handleSelect"
         >
+        <span slot="switcherIcon" class="icon-plus"></span>
         <div slot="title" slot-scope="item">
           <span class="tree-title">{{ item[propData.treeTileField] || item.title }}</span>
-          <span class="tree-age" v-if="propData.showNum && item.age">({{ item[propData.treeNumField] || item.num }})</span>
+          <span class="tree-age" v-if="propData.showNum && item[propData.treeNumField] || item.num">({{ item[propData.treeNumField] || item.num }})</span>
         </div>
         </a-tree>
       </template>
@@ -45,6 +47,8 @@ export default {
       propData: this.$root.propData.compositeAttr || {
         width: '300px',
         showNum: true,
+        treeTileField: 'name',
+        treeNumField: 'num',
         chooseStyle: 'first',
         treeKeyField: 'value'
       }
@@ -56,7 +60,6 @@ export default {
   },
   methods: {
     getKey(data) {
-      console.log(data, 99)
       return data[this.propData.treeKeyField].toString()
     },
     propDataWatchHandle(propData) {
@@ -220,10 +223,24 @@ export default {
             params: current,
           });
         }
-        this.sendBroadcastMessage({
-          type: 'linkageResult',
-          message: current
-        })
+        if(this.propData.linkageDemandPageModule&&this.propData.linkageDemandPageModule.length>0){
+          let moduleIdArray = [];
+          this.propData.linkageDemandPageModule.forEach(item=>{moduleIdArray.push(item.moduleId)});
+          this.sendBroadcastMessage({
+            type:"linkageDemand",
+            message:current,
+            rangeModule:moduleIdArray,
+          })
+        }
+        if(this.propData.linkageResultPageModule&&this.propData.linkageResultPageModule.length>0){
+          let moduleIdArray = [];
+          this.propData.linkageResultPageModule.forEach(item=>{moduleIdArray.push(item.moduleId)});
+          this.sendBroadcastMessage({
+            type:"linkageResult",
+            message:current,
+            rangeModule:moduleIdArray,
+          })
+        }
       }
     },
     // 初始化默认
@@ -241,6 +258,7 @@ export default {
       }
     },
     requireData() {
+      this.treeShow = false;
       let params = {}
       if (this.propData.handleInterfaceFlag && this.propData.handleInterfaceFlag.length > 0) {
         let name = this.propData.handleInterfaceFlag[0].name
@@ -260,11 +278,10 @@ export default {
         })
     },
     initData() {
-      // if (this.moduleObject.env !== 'production') {
-      //   this.getMockData()
-      //   return
-      // }
-      this.getMockData()
+      if (this.moduleObject.env !== 'production') {
+        this.getMockData()
+        return
+      }
       this.requireData();
     },
     init() {
@@ -276,8 +293,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .ant-tree-switcher.ant-tree-switcher_open {
+  .icon-plus {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-image: url("../assets/jia.png"); // 展开节点时的icon
+  }
+}
+::v-deep .ant-tree-switcher.ant-tree-switcher_close {
+  .icon-plus {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-image: url("../assets/jian.png"); // 收起节点时的icon
+  }
+}
 ::v-deep .ant-tree.ant-tree-show-line li span.ant-tree-switcher{
-  font-size: 20px;
+  // width: 20px;
+  // height: 20px;
 }
 ::v-deep .ant-tree.ant-tree-show-line li:not(:last-child)::before{
   border-left: 1px dashed #d9d9d9;
