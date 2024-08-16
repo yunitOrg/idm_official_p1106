@@ -159,9 +159,16 @@
           {
             "type": "dataSourceSelect",
             "layoutType": "inline",
-            "text": "数据源",
-            "desc": "内容数据源 数据源格式：[{title: '发文', value: '1', num: 1, children: [{title: '党组', value: '2', num: 2}]}]",
+            "text": "数结构",
+            "desc": "树形内容数据源 数据源格式：[{title: '发文', value: '1', num: 1, children: [{title: '党组', value: '2', num: 2}]}]",
             "bindKey": "contentDataSource"
+          },
+          {
+            "type": "dataSourceSelect",
+            "layoutType": "inline",
+            "text": "数字数据",
+            "desc": "树形数字数据源 数据源格式：{1: 20, 2: 30}",
+            "bindKey": "contentTreeDataSource"
           },
           {
             "type": "actionSelect",

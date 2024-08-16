@@ -10,6 +10,20 @@
       "className": "ItreeShow",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.componet.official.iofficialpart",
+      "comName": "公文文号主办部门",
+      "className": "IofficialPart",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.componet.official.iofficialstatus",
+      "comName": "公文文号办理情况",
+      "className": "IofficialStatus",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

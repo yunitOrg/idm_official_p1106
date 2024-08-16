@@ -13,8 +13,8 @@
     <div class="itreeShow">
       <template v-if="treeShow">
         <a-tree
-          :showLine="true"
-          :showIcon="true"
+          :showLine="false"
+          :showIcon="false"
           :treeData="treeData"
           :replaceFields="{children: 'children', key: propData.treeKeyField, title: propData.treeTileField}"
           :defaultSelectedKeys="defaultSelectedKeys"
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import API from '../api/index';
 export default {
   name: 'ItreeShow',
   data() {
@@ -145,18 +146,18 @@ export default {
       this.treeData = [
       {
         title: '发文',
-        value: '0-0',
+        value: '2305262001457EcjMOO9fUw7XxwWltG',
         num: 1,
         url: 'https://www.baidu.com/',
         children: [
             {
               title: '党组',
-              value: '0-0-0',
+              value: '240507163105YVjAEL4n2kdN1dPJgFI',
               num: 2,
             },
             {
               title: '专报',
-              value: '0-0-1',
+              value: '220827105307oCGCSqvC7EuhC7dpJD2',
               num: 3,
             },
           ],
@@ -257,6 +258,14 @@ export default {
         this.sendMessage()
       }
     },
+    handleSetNum(tree, obj) {
+      if (tree && tree.length > 0) {
+        tree.forEach(item => {
+          item[this.propData.treeNumField] = obj[item[this.propData.treeKeyField]]
+          item.children && this.handleSetNum(item.children, obj)
+        })
+      }
+    },
     requireData() {
       this.treeShow = false;
       let params = {}
@@ -268,14 +277,25 @@ export default {
         });
       }
       if (!this.dataFlag) return
+      // 树形结构
       this.propData.contentDataSource && IDM.datasource.request(this.propData.contentDataSource[0]?.id, {
-          moduleObject: this.moduleObject,
-          ...this.cacheParams,
-          ...params
-          }, (data) => {
-            this.treeData = data;
-            this.handleData()
-        })
+        moduleObject: this.moduleObject,
+        ...this.cacheParams,
+        ...params
+        }, (data) => {
+          this.treeData = data;
+          this.handleData()
+      })
+      // 树形数字
+      this.propData.contentTreeDataSource && IDM.datasource.request(this.propData.contentTreeDataSource[0]?.id, {
+        moduleObject: this.moduleObject,
+        ...this.cacheParams,
+        ...params
+        }, (data) => {
+        let result = data && JSON.parse(data);
+        result && this.handleSetNum(this.treeData, result);
+      })
+      this.handleSetTreeNum()
     },
     initData() {
       if (this.moduleObject.env !== 'production') {
@@ -298,7 +318,7 @@ export default {
     width: 100%;
     height: 100%;
     background-size: 100% 100%;
-    background-image: url("../assets/jia.png"); // 展开节点时的icon
+    background-image: url("../assets/jian.png"); // 收起节点时的icon
   }
 }
 ::v-deep .ant-tree-switcher.ant-tree-switcher_close {
@@ -306,15 +326,11 @@ export default {
     width: 100%;
     height: 100%;
     background-size: 100% 100%;
-    background-image: url("../assets/jian.png"); // 收起节点时的icon
+    background-image: url("../assets/jia.png"); // 展开节点时的icon
   }
 }
-::v-deep .ant-tree.ant-tree-show-line li span.ant-tree-switcher{
-  // width: 20px;
-  // height: 20px;
-}
 ::v-deep .ant-tree.ant-tree-show-line li:not(:last-child)::before{
-  border-left: 1px dashed #d9d9d9;
+  border-left: 1px dashed #979797;
 }
 .tree-title{
   display: inline-block;
@@ -331,15 +347,27 @@ export default {
 }
 ::v-deep .ant-tree.ant-tree-show-line li:not(:last-child) .ant-tree-treenode-switcher-close::after,
 ::v-deep .ant-tree.ant-tree-show-line li:not(:last-child) .ant-tree-treenode-switcher-open::after {
-  content: '';
+  // content: '';
   width: 8px;
   height: 1px;
   position: absolute;
-  border-top: 1px solid #d9d9d9;
+  border-top: 1px solid #979797;
   left: -6px;
   top: 18px;
 }
 ::v-deep .ant-tree li span.ant-tree-switcher.ant-tree-switcher-noop {
   // display: none !important;
+}
+::v-deep .ant-tree-child-tree{
+  padding: 10px 0 0 40px;
+  position: relative;
+  li &::after{
+    content: "";
+    width: 1px;
+    height: 100%;
+    border-left: 1px dashed #979797;
+    position: absolute;
+    top: 0;
+  }
 }
 </style>
