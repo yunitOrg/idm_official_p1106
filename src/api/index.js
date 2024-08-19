@@ -64,6 +64,21 @@ export default {
         return data
     },
     /**
+    * @Desc 公文-树形统计页面
+    * @Author hjp
+    */
+    async ApiWhThreeData({fileType, year}) {
+        const { data } = await window.IDM.http.get('ctrl/GwWhStatistics/getWhTreeData', {
+            fileType: fileType,
+            year: year,
+        }, {
+            headers: {
+            'Content-Type': 'application/json'
+            },
+        })
+        return data
+    },
+    /**
     * @Desc 公文-文号办理情况统计
     * @Author hjp
     */

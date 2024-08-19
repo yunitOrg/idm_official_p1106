@@ -42,11 +42,12 @@
             </a-range-picker>
           </a-config-provider>
         </div>
-        <a-button class="m10" @click="handleSearch('week')">本周</a-button>
-        <a-button class="m10" @click="handleSearch('month')">本月</a-button>
-        <a-button class="m10" @click="handleSearch('jid')">本季度</a-button>
-        <a-button class="m10" @click="handleSearch('year')">本年</a-button>
+        <a-button class="m10" @click="handleSearch('week')" :class="chooseBtn=='week'&&'btnactivity'">本周</a-button>
+        <a-button class="m10" @click="handleSearch('month')" :class="chooseBtn=='month'&&'btnactivity'">本月</a-button>
+        <a-button class="m10" @click="handleSearch('jid')" :class="chooseBtn=='jid'&&'btnactivity'">本季度</a-button>
+        <a-button class="m10" @click="handleSearch('year')" :class="chooseBtn=='year'&&'btnactivity'">本年</a-button>
         <a-button type="primary" class="m10" @click="handleSearch('search')">检索</a-button>
+        <a-button class="m10" @click="handleSearch('reset')">重置</a-button>
         <a-button class="m10" @click="handleSearch('import')">导出</a-button>
       </div>
       <a-table
@@ -74,6 +75,7 @@ export default {
   data() {
     return {
       locale,
+      chooseBtn: '',
       loading: false,
       columns: [],
       tableData: [],
@@ -108,16 +110,27 @@ export default {
     handleSearch(type) {
       switch (type) {
         case 'week':
+          this.chooseBtn = type;
           this.search.dateRange = 5;
           break
         case 'month':
+          this.chooseBtn = type;
           this.search.dateRange = 4;
           break
         case 'jid':
+          this.chooseBtn = type;
           this.search.dateRange = 3;
           break
         case 'year':
+          this.chooseBtn = type;
           this.search.dateRange = 1;
+          break
+        case 'reset':
+          this.chooseBtn = '';
+          this.search.dateRange = '';
+          this.search.time = [];
+          this.search.startTime = '';
+          this.search.endTime = '';
           break
         case 'import':{
           let url = `/ctrl/GwWhStatistics/exportHandlingWhStatisticData?deptId=${this.search.deptId}
@@ -292,6 +305,10 @@ export default {
   .flex{
     display: flex;
     align-items: center;
+  }
+  .btnactivity{
+    background-color: #1890ff;
+    color: #fff;
   }
   .minw50{
     min-width: 50px;

@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import API from '../api/index';
 export default {
   name: 'ItreeShow',
   data() {
@@ -147,18 +146,15 @@ export default {
       {
         title: '发文',
         value: '2305262001457EcjMOO9fUw7XxwWltG',
-        num: 1,
         url: 'https://www.baidu.com/',
         children: [
             {
               title: '党组',
               value: '240507163105YVjAEL4n2kdN1dPJgFI',
-              num: 2,
             },
             {
               title: '专报',
               value: '220827105307oCGCSqvC7EuhC7dpJD2',
-              num: 3,
             },
           ],
         },
@@ -192,6 +188,7 @@ export default {
         }
       ];
       this.handleData()
+      this.handleSetNum(this.treeData, {"240507163105YVjAEL4n2kdN1dPJgFI": 1});
     },
     handleData() {
       this.treeShow = true;
@@ -285,17 +282,18 @@ export default {
         }, (data) => {
           this.treeData = data;
           this.handleData()
+          // 树形数字
+          this.propData.contentTreeDataSource && IDM.datasource.request(this.propData.contentTreeDataSource[0]?.id, {
+            moduleObject: this.moduleObject,
+            ...this.cacheParams,
+            ...params
+            }, (data) => {
+            let result = data && JSON.parse(data);
+            result && this.handleSetNum(this.treeData, result);
+            this.treeShow = false;
+            this.treeShow = true;
+          })
       })
-      // 树形数字
-      this.propData.contentTreeDataSource && IDM.datasource.request(this.propData.contentTreeDataSource[0]?.id, {
-        moduleObject: this.moduleObject,
-        ...this.cacheParams,
-        ...params
-        }, (data) => {
-        let result = data && JSON.parse(data);
-        result && this.handleSetNum(this.treeData, result);
-      })
-      this.handleSetTreeNum()
     },
     initData() {
       if (this.moduleObject.env !== 'production') {
