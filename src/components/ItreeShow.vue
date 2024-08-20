@@ -10,10 +10,30 @@
     :id="moduleObject.id"
     :idm-ctrl-id="moduleObject.id"
   >
-    <div class="itreeShow">
-      <template v-if="treeShow">
+    <div class="itreeShow" v-if="showpage">
+      <div class="tree-box" v-for="(item, index) in treeData" :key="index">
+        <div class="flex" :class="{'tree-child-title': !item.children || (item.children && item.children.length == 0)}">
+          <span class="icon" :class="{
+            'switch': item.children && item.children.length,
+            'icon-open': !item.istreeshow,
+            'icon-close': item.istreeshow
+          }" @click="handleShrinkIcon(item)"></span>
+          <span class="tree-font" :class="{
+            'tree-activity': defaultSelectedKeys.includes(item[propData.treeKeyField])
+          }" @click="handleSelect(item)">{{ item[propData.treeTileField] }}</span>
+          <span class="tree-age" v-if="propData.showNum && item[propData.treeNumField]">({{ item[propData.treeNumField] }})</span>
+        </div>
+        <template v-if="item.istreeshow">
+          <treeList
+            :item="item"
+            :defaultSelectedKeys="defaultSelectedKeys"
+          ></treeList>
+        </template>
+        
+      </div>
+      <!-- <template v-if="treeShow">
         <a-tree
-          :showLine="false"
+          :showLine="true"
           :showIcon="false"
           :treeData="treeData"
           :replaceFields="{children: 'children', key: propData.treeKeyField, title: propData.treeTileField}"
@@ -28,18 +48,30 @@
           <span class="tree-age" v-if="propData.showNum && item[propData.treeNumField] || item.num">({{ item[propData.treeNumField] || item.num }})</span>
         </div>
         </a-tree>
-      </template>
+      </template> -->
     </div>
   </div>
 </template>
 
 <script>
+import treeList from '../commonComponents/treeList.vue';
+import API from '../api/index'
 export default {
   name: 'ItreeShow',
+  components: {
+    treeList
+  },
+  provide() {
+    return {
+      propData: this.propData,
+      handleShrinkIcon: this.handleShrinkIcon,
+      handleSelect: this.handleSelect
+    }
+  },
   data() {
     return {
       defaultSelectedKeys: [],
-      treeShow: false,
+      showpage: false,
       treeData: [],
       moduleObject: {},
       cacheParams: {},
@@ -47,8 +79,8 @@ export default {
       propData: this.$root.propData.compositeAttr || {
         width: '300px',
         showNum: true,
-        treeTileField: 'name',
-        treeNumField: 'num',
+        treeTileField: 'title',
+        treeNumField: 'num1',
         chooseStyle: 'first',
         treeKeyField: 'value'
       }
@@ -59,8 +91,9 @@ export default {
     this.init();
   },
   methods: {
-    getKey(data) {
-      return data[this.propData.treeKeyField].toString()
+    // 收缩按钮
+    handleShrinkIcon(item) {
+      item.istreeshow = !item.istreeshow;
     },
     propDataWatchHandle(propData) {
       this.propData = propData.compositeAttr || {};
@@ -137,8 +170,10 @@ export default {
       window.IDM.broadcast && window.IDM.broadcast.send(object);
     },
     // 点击tree节点
-    handleSelect(selectedKeys) {
-      this.defaultSelectedKeys = selectedKeys;
+    handleSelect(item) {
+      let ary = [];
+      ary.push(item[this.propData.treeKeyField])
+      this.defaultSelectedKeys = ary
       this.sendMessage()
     },
     getMockData() {
@@ -151,10 +186,24 @@ export default {
             {
               title: '党组',
               value: '240507163105YVjAEL4n2kdN1dPJgFI',
+              children: [
+                {
+                  title: '党组1',
+                  value: '23232',
+                  children: []
+                }
+              ]
             },
             {
               title: '专报',
               value: '220827105307oCGCSqvC7EuhC7dpJD2',
+              children: [
+                {
+                  title: '专报1',
+                  value: '3232',
+                  children: []
+                }
+              ]
             },
           ],
         },
@@ -165,10 +214,12 @@ export default {
             {
               title: '党组',
               value: '0-1-0',
+              children: []
             },
             {
               title: '专报',
               value: '0-1-1',
+              children: []
             }
           ],
         },
@@ -187,11 +238,22 @@ export default {
           ],
         }
       ];
+      this.handleTreeAdd(this.treeData);
       this.handleData()
-      this.handleSetNum(this.treeData, {"240507163105YVjAEL4n2kdN1dPJgFI": 1});
+      this.handleSetNum(this.treeData, {"2305262001457EcjMOO9fUw7XxwWltG": 2,"240507163105YVjAEL4n2kdN1dPJgFI": 1, "220827105307oCGCSqvC7EuhC7dpJD2": 3});
+    },
+    // 处理tree 添加数据
+    handleTreeAdd(tree) {
+      for(let i=0; i<tree.length; i++) {
+        let item = tree[i];
+        this.$set(item, 'istreeshow', true);
+        if (item.children && item.children.length > 0) {
+          this.handleTreeAdd(item.children)
+        }
+      }
     },
     handleData() {
-      this.treeShow = true;
+      this.showpage = true;
       this.defaultChooseData();
     },
     // 获取id 对应数据
@@ -258,13 +320,13 @@ export default {
     handleSetNum(tree, obj) {
       if (tree && tree.length > 0) {
         tree.forEach(item => {
-          item[this.propData.treeNumField] = obj[item[this.propData.treeKeyField]]
+          this.$set(item, this.propData.treeNumField, obj[item[this.propData.treeKeyField]])
           item.children && this.handleSetNum(item.children, obj)
         })
       }
     },
     requireData() {
-      this.treeShow = false;
+      this.showpage = false;
       let params = {}
       if (this.propData.handleInterfaceFlag && this.propData.handleInterfaceFlag.length > 0) {
         let name = this.propData.handleInterfaceFlag[0].name
@@ -281,6 +343,7 @@ export default {
         ...params
         }, (data) => {
           this.treeData = data;
+          this.handleTreeAdd(this.treeData);
           this.handleData()
           // 树形数字
           this.propData.contentTreeDataSource && IDM.datasource.request(this.propData.contentTreeDataSource[0]?.id, {
@@ -290,16 +353,28 @@ export default {
             }, (data) => {
             let result = data && JSON.parse(data);
             result && this.handleSetNum(this.treeData, result);
-            this.treeShow = false;
-            this.treeShow = true;
+            this.showpage = false;
+            this.showpage = true;
           })
       })
     },
-    initData() {
+    async initData() {
       if (this.moduleObject.env !== 'production') {
         this.getMockData()
         return
       }
+      // let res = await API.ApiWhThreeData({fileType: "", year: ""})
+      // if (res.code == '200') {
+      //   this.treeData = res.data;
+      //   this.handleTreeAdd(this.treeData);
+      //   this.handleData()
+      //   let result = await API.ApiWhThreeNumData({fileType: "", year: ""})
+      //   let flag = result.data && JSON.parse(result.data);
+      //   flag && this.handleSetNum(this.treeData, flag);
+      //   this.showpage = false;
+      //   this.showpage = true;
+      //   console.log(this.treeData)
+      // }
       this.requireData();
     },
     init() {
@@ -310,62 +385,76 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-::v-deep .ant-tree-switcher.ant-tree-switcher_open {
-  .icon-plus {
-    width: 100%;
-    height: 100%;
-    background-size: 100% 100%;
-    background-image: url("../assets/jian.png"); // 收起节点时的icon
+<style lang="scss">
+.itreeShow{
+  user-select: none;
+  .flex{
+    display: flex;
+    align-items: center;
   }
-}
-::v-deep .ant-tree-switcher.ant-tree-switcher_close {
-  .icon-plus {
-    width: 100%;
-    height: 100%;
-    background-size: 100% 100%;
-    background-image: url("../assets/jia.png"); // 展开节点时的icon
+  .tree-font{
+    display: inline-block;
+    font-size: 16px;
+    color: #333;
+    margin-left: 5px;
+    cursor: pointer;
+    width: 90%;
+    flex: 1;
+    padding-top: 5px;
   }
-}
-::v-deep .ant-tree.ant-tree-show-line li:not(:last-child)::before{
-  border-left: 1px dashed #979797;
-}
-.tree-title{
-  display: inline-block;
-  width: 90%;
-  color: #333;
-  font-size: 16px;
-}
-.tree-age{
-  color: #E02020;
-  font-size: 16px;
-}
-::v-deep .ant-tree li .ant-tree-node-content-wrapper{
-  width: 100%;
-}
-::v-deep .ant-tree.ant-tree-show-line li:not(:last-child) .ant-tree-treenode-switcher-close::after,
-::v-deep .ant-tree.ant-tree-show-line li:not(:last-child) .ant-tree-treenode-switcher-open::after {
-  // content: '';
-  width: 8px;
-  height: 1px;
-  position: absolute;
-  border-top: 1px solid #979797;
-  left: -6px;
-  top: 18px;
-}
-::v-deep .ant-tree li span.ant-tree-switcher.ant-tree-switcher-noop {
-  // display: none !important;
-}
-::v-deep .ant-tree-child-tree{
-  padding: 10px 0 0 40px;
-  position: relative;
-  li &::after{
+  .tree-age{
+    color: #E02020;
+    font-size: 16px;
+    // width: 10%;
+  }
+  .tree-box:last-child{
+    .tree-ul{
+      background: unset;
+    }
+  }
+  .tree-child-title{
+    padding-left: 20px;
+  }
+  .tree-child-title::after{
     content: "";
-    width: 1px;
-    height: 100%;
-    border-left: 1px dashed #979797;
+    display: inline-block;
+    width: 21px;
+    height: 24px;
+    background-image: url('../assets/metro.png');
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-position: -84px -42px;
     position: absolute;
-    top: 0;
+    left: 24px;
+  }
+  .tree-activity{
+    background-color: #e5e5e5;
+  }
+  .switch{
+    width: 18px;
+    height: 18px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+  .icon{
+    display: inline-block;
+    vertical-align: middle;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+  }
+  .icon-open{
+    background-image: url("../assets/jia.png");
+  }
+  .icon-close{
+    background-image: url("../assets/jian.png");
+  }
+  .itreelist{
+    .tree-ul{
+      padding-left: 25px;
+      background: url('../assets/line_conn.png') 0 0 repeat-y;
+      position: relative;
+    }
   }
 }
 </style>

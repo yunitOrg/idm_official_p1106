@@ -79,7 +79,7 @@ export default {
         return data
     },
     /**
-    * @Desc 公文-文号办理情况统计
+    * @Desc 公文-树形统计页面获取num
     * @Author hjp
     */
     async ApiWhThreeNumData({fileType, year}) {

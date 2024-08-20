@@ -190,14 +190,14 @@
                 "layoutType": "inline",
                 "text": "tree的key",
                 "bindKey": "treeKeyField",
-                "default": "key"
+                "default": "value"
             },
           {
             "type": "dataSourceFiledSelect",
             "layoutType": "inline",
             "text": "标题",
             "bindKey": "treeTileField",
-            "default": "title"
+            "default": "name"
           },
           {
             "type": "dataSourceFiledSelect",
