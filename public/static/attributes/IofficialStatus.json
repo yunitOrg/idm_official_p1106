@@ -20,13 +20,6 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
-            "type": "switch",
-            "layoutType": "inline",
-            "text": "固定高度",
-            "bindKey": "tableHeightFlag",
-            "default": false
-          },
-          {
             "type": "input",
             "layoutType": "inline",
             "text": "表格宽度",
@@ -41,6 +34,12 @@
             "desc": "表格最大高度",
             "bindKey": "tableMaxHeight",
             "default": "calc(100%)"
+          },
+          {
+            "type": "box",
+            "layoutType": "block",
+            "text": "表格边距",
+            "bindKey": "tableBox"
           }
         ]
       },
@@ -104,6 +103,21 @@
               "text": "边框",
               "bindKey": "boxborder"
             }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "高级",
+        "desc": "点击？查看高级设置用法指南",
+        "children": [
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "表头栏目数据处理",
+            "desc": "对表头数据加工处理 参数为{_this: this, params: header}",
+            "bindKey": "handleTableColumn",
+            "multiple": false
+          }
         ]
       }
   ]

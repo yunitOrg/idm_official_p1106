@@ -11,25 +11,31 @@
     :idm-ctrl-id="moduleObject.id"
   >
     <div class="itreeShow" v-if="showpage">
-      <div class="tree-box" v-for="(item, index) in treeData" :key="index">
-        <div class="flex" :class="{'tree-child-title': !item.children || (item.children && item.children.length == 0)}">
-          <span class="icon" :class="{
-            'switch': item.children && item.children.length,
-            'icon-open': !item.istreeshow,
-            'icon-close': item.istreeshow
-          }" @click="handleShrinkIcon(item)"></span>
-          <span class="tree-font" :class="{
-            'tree-activity': defaultSelectedKeys.includes(item[propData.treeKeyField])
-          }" @click="handleSelect(item)">{{ item[propData.treeTileField] }}</span>
-          <span class="tree-age" v-if="propData.showNum && item[propData.treeNumField]">({{ item[propData.treeNumField] }})</span>
+      <template v-if="treeData.length">
+        <div class="tree-box" v-for="(item, index) in treeData" :key="index">
+          <div class="flex" :class="{'tree-child-title': !item.children || (item.children && item.children.length == 0)}">
+            <span class="icon" :class="{
+              'switch': item.children && item.children.length,
+              'icon-open': !item.istreeshow,
+              'icon-close': item.istreeshow
+            }" @click="handleShrinkIcon(item)"></span>
+            <span class="tree-font" :class="{
+              'tree-activity': defaultSelectedKeys.includes(item[propData.treeKeyField])
+            }" @click="handleSelect(item)">{{ item[propData.treeTileField] }}</span>
+            <span class="tree-age" v-if="propData.showNum && item[propData.treeNumField]">({{ item[propData.treeNumField] }})</span>
+          </div>
+          <template v-if="item.istreeshow">
+            <treeList
+              :item="item"
+              :defaultSelectedKeys="defaultSelectedKeys"
+            ></treeList>
+          </template>
         </div>
-        <template v-if="item.istreeshow">
-          <treeList
-            :item="item"
-            :defaultSelectedKeys="defaultSelectedKeys"
-          ></treeList>
-        </template>
-        
+      </template>
+      <div class="tree-kong" v-else>
+        <a-empty >
+          <span slot="description">暂无数据</span>
+        </a-empty>
       </div>
       <!-- <template v-if="treeShow">
         <a-tree
@@ -78,9 +84,10 @@ export default {
       dataFlag: true,
       propData: this.$root.propData.compositeAttr || {
         width: '300px',
+        height: '100%',
         showNum: true,
-        treeTileField: 'title',
-        treeNumField: 'num1',
+        treeTileField: 'name',
+        treeNumField: 'num',
         chooseStyle: 'first',
         treeKeyField: 'value'
       }
@@ -179,27 +186,27 @@ export default {
     getMockData() {
       this.treeData = [
       {
-        title: '发文',
+        name: '发文',
         value: '2305262001457EcjMOO9fUw7XxwWltG',
         url: 'https://www.baidu.com/',
         children: [
             {
-              title: '党组',
+              name: '党组',
               value: '240507163105YVjAEL4n2kdN1dPJgFI',
               children: [
                 {
-                  title: '党组1',
+                  name: '党组1',
                   value: '23232',
                   children: []
                 }
               ]
             },
             {
-              title: '专报',
+              name: '专报',
               value: '220827105307oCGCSqvC7EuhC7dpJD2',
               children: [
                 {
-                  title: '专报1',
+                  name: '专报1',
                   value: '3232',
                   children: []
                 }
@@ -208,39 +215,39 @@ export default {
           ],
         },
         {
-          title: '收文',
+          name: '收文',
           value: '0-1',
           children: [
             {
-              title: '党组',
+              name: '党组',
               value: '0-1-0',
               children: []
             },
             {
-              title: '专报',
+              name: '专报',
               value: '0-1-1',
               children: []
             }
           ],
         },
         {
-          title: '收文',
+          name: '收文',
           value: '0-2',
           children: [
             {
-              title: '党组',
+              name: '党组',
               value: '0-2-0',
             },
             {
-              title: '专报',
+              name: '专报',
               value: '0-2-1',
             }
           ],
         }
       ];
-      this.handleTreeAdd(this.treeData);
+      this.treeData.length && this.handleTreeAdd(this.treeData);
       this.handleData()
-      this.handleSetNum(this.treeData, {"2305262001457EcjMOO9fUw7XxwWltG": 2,"240507163105YVjAEL4n2kdN1dPJgFI": 1, "220827105307oCGCSqvC7EuhC7dpJD2": 3});
+      this.treeData.length && this.handleSetNum(this.treeData, {"2305262001457EcjMOO9fUw7XxwWltG": 2,"240507163105YVjAEL4n2kdN1dPJgFI": 1, "220827105307oCGCSqvC7EuhC7dpJD2": 3});
     },
     // 处理tree 添加数据
     handleTreeAdd(tree) {
@@ -254,7 +261,7 @@ export default {
     },
     handleData() {
       this.showpage = true;
-      this.defaultChooseData();
+      this.treeData.length && this.defaultChooseData();
     },
     // 获取id 对应数据
     handleTreeGetChooseId(tree, targetAry) {
@@ -343,7 +350,7 @@ export default {
         ...params
         }, (data) => {
           this.treeData = data;
-          this.handleTreeAdd(this.treeData);
+          this.treeData.length && this.handleTreeAdd(this.treeData);
           this.handleData()
           // 树形数字
           this.propData.contentTreeDataSource && IDM.datasource.request(this.propData.contentTreeDataSource[0]?.id, {
@@ -352,7 +359,7 @@ export default {
             ...params
             }, (data) => {
             let result = data && JSON.parse(data);
-            result && this.handleSetNum(this.treeData, result);
+            (this.treeData.length && result) && this.handleSetNum(this.treeData, result);
             this.showpage = false;
             this.showpage = true;
           })
@@ -401,6 +408,11 @@ export default {
     width: 90%;
     flex: 1;
     padding-top: 5px;
+  }
+  .tree-kong{
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
   .tree-age{
     color: #E02020;

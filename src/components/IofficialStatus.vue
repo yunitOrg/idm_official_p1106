@@ -12,25 +12,25 @@
   >
     <div class="iofficialstatus">
       <div class="table-search pd20">
-        <div class="wdb20">
-          <span>主办部门：</span>
-          <a-select v-model="search.deptId" allowClear style="width: 50%">
+        <div class="flex wdb20">
+          <span class="minw100">主办部门：</span>
+          <a-select v-model="search.deptId" allowClear style="width: 150px">
             <a-select-option value="">全部</a-select-option>
             <a-select-option :value="item.value" v-for="(item, index) in selectData.zhubanpart" :key="index">
               {{ item.text }}
             </a-select-option>
           </a-select>
         </div>
-        <div class="wdb20">
-          <span>文件类型：</span>
-          <a-select v-model="search.fileType" allowClear style="width: 50%">
+        <div class="flex wdb20">
+          <span class="minw100">文件类型：</span>
+          <a-select v-model="search.fileType" allowClear style="width: 150px">
             <a-select-option :value="item.value" v-for="(item, index) in selectData.fileType" :key="index">
               {{ item.text }}
             </a-select-option>
           </a-select>
         </div>
         <div class="wdb20 flex">
-          <span class="minw50">时间：</span>
+          <span class="minw100">时间：</span>
           <a-config-provider :locale="locale">
             <a-range-picker
               ref="picker"
@@ -46,22 +46,26 @@
         <a-button class="m10" @click="handleSearch('month')" :class="chooseBtn=='month'&&'btnactivity'">本月</a-button>
         <a-button class="m10" @click="handleSearch('jid')" :class="chooseBtn=='jid'&&'btnactivity'">本季度</a-button>
         <a-button class="m10" @click="handleSearch('year')" :class="chooseBtn=='year'&&'btnactivity'">本年</a-button>
-        <a-button type="primary" class="m10" @click="handleSearch('search')">检索</a-button>
-        <a-button class="m10" @click="handleSearch('reset')">重置</a-button>
-        <a-button class="m10" @click="handleSearch('import')">导出</a-button>
+        <div class="flexright">
+          <a-button type="primary" class="m10" @click="handleSearch('search')">检索</a-button>
+          <a-button class="m10" @click="handleSearch('reset')">重置</a-button>
+          <a-button class="m10" @click="handleSearch('import')">导出</a-button>
+        </div>
       </div>
-      <a-table
-        class="m20"
-        ref="superTable"
-        :columns="columns"
-        :loading="loading"
-        :scroll="{ x: propData.tableMaxWidth, y: tableRealMaxHeight }"
-        :data-source="tableData"
-        :locale="{emptyText: '暂无数据'}"
-        :rowKey="(record, index) => (index)"
-        bordered
-        :pagination="false"
-      />
+      <div class="table">
+        <a-table
+          class="m20"
+          ref="superTable"
+          :columns="columns"
+          :loading="loading"
+          :scroll="{ x: propData.tableMaxWidth, y: tableRealMaxHeight }"
+          :data-source="tableData"
+          :locale="{emptyText: '暂无数据'}"
+          :rowKey="(record, index) => (index)"
+          bordered
+          :pagination="false"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -163,7 +167,8 @@ export default {
      * @Desc 设置样式
      */
      handleStyle() {
-      let styleObject = {};
+      let styleObject = {},
+        tableObject = {};
       for (const key in this.propData) {
         if (this.propData.hasOwnProperty.call(this.propData, key)) {
           const element = this.propData[key]
@@ -189,10 +194,14 @@ export default {
             case 'boxborder':
               IDM.style.setBorderStyle(styleObject, element);
               break
+            case 'tableBox':
+              IDM.style.setBoxStyle(tableObject, element)
+              break
           }
         }
       }
       window.IDM.setStyleToPageHead(this.moduleObject.id + " .iofficialstatus", styleObject);
+      window.IDM.setStyleToPageHead(this.moduleObject.id + " .iofficialstatus .table", tableObject);
     },
     // 合并单元格
     handleRowSpan(key) {
@@ -276,6 +285,13 @@ export default {
             }
           }
         })
+        if (this.propData.handleTableColumn && this.propData.handleTableColumn.length > 0) {
+          let name = this.propData.handleTableColumn[0].name
+          header = window[name] && window[name].call(this, {
+            _this: this,
+            params: header,
+          });
+        }
         this.columns = header;
         this.tableData = data;
       }
@@ -310,8 +326,17 @@ export default {
     background-color: #1890ff;
     color: #fff;
   }
+  .minw100{
+    min-width: 100px;
+  }
   .minw50{
     min-width: 50px;
+  }
+  .flexright{
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    text-align: right;
   }
   .pd20{
     padding-top: 20px;
