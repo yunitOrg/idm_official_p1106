@@ -13,7 +13,7 @@
     <div class="itreeShow" v-if="showpage">
       <template v-if="treeData.length">
         <div class="tree-box" v-for="(item, index) in treeData" :key="index">
-          <div class="flex" :class="{'tree-child-title': !item.children || (item.children && item.children.length == 0)}">
+          <div class="flex" :class="{'tree-child-title notree-child-title': !item.children || (item.children && item.children.length == 0)}">
             <span class="icon" :class="{
               'switch': item.children && item.children.length,
               'icon-open': !item.istreeshow,
@@ -26,6 +26,7 @@
           </div>
           <template v-if="item.istreeshow">
             <treeList
+              :class="{'no-tree-ul': treeData[index+1]?.children && treeData[index+1]?.children.length == 0}"
               :item="item"
               :defaultSelectedKeys="defaultSelectedKeys"
             ></treeList>
@@ -419,7 +420,7 @@ export default {
     font-size: 16px;
     // width: 10%;
   }
-  .tree-box:last-child{
+  .tree-box:last-of-type{
     .tree-ul{
       background: unset;
     }
@@ -438,6 +439,9 @@ export default {
     background-position: -84px -42px;
     position: absolute;
     left: 24px;
+  }
+  .notree-child-title::after{
+    background-image: unset;
   }
   .tree-activity{
     background-color: #e5e5e5;
@@ -466,6 +470,11 @@ export default {
       padding-left: 25px;
       background: url('../assets/line_conn.png') 0 0 repeat-y;
       position: relative;
+    }
+  }
+  .no-tree-ul{
+    .tree-ul{
+      background: unset;
     }
   }
 }
