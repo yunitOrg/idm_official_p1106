@@ -14,7 +14,7 @@
       <div class="table-search pd20">
         <div class="flex wdb20">
           <span class="minw100">主办部门：</span>
-          <a-select v-model="search.deptId" allowClear style="width: 150px">
+          <a-select v-model="search.deptId" style="width: 150px">
             <a-select-option value="">全部</a-select-option>
             <a-select-option :value="item.value" v-for="(item, index) in selectData.zhubanpart" :key="index">
               {{ item.text }}
