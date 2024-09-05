@@ -12,7 +12,39 @@
   >
     <div class="iofficialstatus">
       <div class="table-search pd20">
-        <div class="flex wdb20">
+        <template  v-for="(item, index) in searchList" >
+          <div class="flex wdb20"  v-if="item.show" :key="index">
+            <span class="minw100">{{ item.name }}</span>
+            <template v-if="item.key == 1">
+              <a-select v-model="search.deptId" style="width: 150px">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.value" v-for="(item, index) in selectData.zhubanpart" :key="index">
+                  {{ item.text }}
+                </a-select-option>
+              </a-select>
+            </template>
+            <template v-if="item.key == 2">
+              <a-select v-model="search.fileType" style="width: 150px">
+                <a-select-option :value="item.value" v-for="(item, index) in selectData.fileType" :key="index">
+                  {{ item.text }}
+                </a-select-option>
+              </a-select>
+            </template>
+            <template v-if="item.key == 3">
+              <a-config-provider :locale="locale">
+                <a-range-picker
+                  ref="picker"
+                  :placeholder="['开始时间', '结束时间']"
+                  valueFormat="YYYY-MM-DD"
+                  v-model="search.time"
+                  @change="handleTimeChange"
+                >
+                </a-range-picker>
+              </a-config-provider>
+            </template>
+          </div>
+        </template>
+        <!-- <div class="flex wdb20">
           <span class="minw100">主办部门：</span>
           <a-select v-model="search.deptId" style="width: 150px">
             <a-select-option value="">全部</a-select-option>
@@ -41,7 +73,7 @@
             >
             </a-range-picker>
           </a-config-provider>
-        </div>
+        </div> -->
         <a-button class="m10" @click="handleSearch('week')" :class="chooseBtn=='week'&&'btnactivity'">本周</a-button>
         <a-button class="m10" @click="handleSearch('month')" :class="chooseBtn=='month'&&'btnactivity'">本月</a-button>
         <a-button class="m10" @click="handleSearch('jid')" :class="chooseBtn=='jid'&&'btnactivity'">本季度</a-button>
@@ -79,6 +111,23 @@ export default {
   data() {
     return {
       locale,
+      searchList: [
+        {
+          name: "主办部门：",
+          key: 1,
+          show: true
+        },
+        {
+          name: "文件类型：",
+          key: 2,
+          show: true
+        },
+        {
+          name: "时间：",
+          key: 3,
+          show: true
+        }
+      ],
       chooseBtn: '',
       loading: false,
       columns: [],
@@ -96,11 +145,26 @@ export default {
         fileType: []
       },
       moduleObject: {},
-      propData: this.$root.propData.compositeAttr || {}
+      propData: this.$root.propData.compositeAttr || {
+        archiveNumList: [
+          {
+            key: 3,
+            name: "拟稿时间：",
+            show: true
+          }
+        ]
+      }
     }
   },
   mounted() {
     this.moduleObject = this.$root.moduleObject;
+    if (this.propData.archiveNumList && this.propData.archiveNumList.length > 0) {
+      this.propData.archiveNumList.forEach(item => {
+        if (item.key && this.searchList.map(i => i.key).includes(parseInt(item.key))) {
+          this.searchList[item.key - 1] = item;
+        }
+      })
+    }
     this.requireMount(() => {
       this.initData();
     });
