@@ -13,7 +13,10 @@
     <div class="itreeShow" v-if="showpage">
       <template v-if="treeData.length">
         <div class="tree-box" v-for="(item, index) in treeData" :key="index">
-          <div class="flex" :class="{'tree-child-title notree-child-title': !item.children || (item.children && item.children.length == 0)}">
+          <div class="flex" :class="{
+              'tree-child': (!item.children || item.children.length == 0) && (index+1 != treeData.length),
+              'tree-child-title notree-child-title': index+1 != treeData.length && (!item.children || (item.children && item.children.length == 0))
+            }">
             <span class="icon" :class="{
               'switch': item.children && item.children.length,
               'icon-open': !item.istreeshow,
@@ -236,11 +239,11 @@ export default {
           value: '0-2',
           children: [
             {
-              name: '党组',
+              name: '党组2',
               value: '0-2-0',
             },
             {
-              name: '专报',
+              name: '专报2',
               value: '0-2-1',
             }
           ],
@@ -425,6 +428,21 @@ export default {
       background: unset;
     }
   }
+  .tree-child{
+    padding-left: 20px;
+  }
+  .tree-child::after{
+    content: "";
+    display: inline-block;
+    width: 21px;
+    height: 28px;
+    background-image: url('../assets/metro.png');
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-position: -84px -19px;
+    position: absolute;
+    left: 24px;
+  }
   .tree-child-title{
     padding-left: 20px;
   }
@@ -432,7 +450,7 @@ export default {
     content: "";
     display: inline-block;
     width: 21px;
-    height: 24px;
+    height: 31px;
     background-image: url('../assets/metro.png');
     background-repeat: no-repeat;
     cursor: pointer;
@@ -444,7 +462,8 @@ export default {
     background-image: unset;
   }
   .tree-activity{
-    background-color: #e5e5e5;
+    // background-color: #e5e5e5;
+    font-weight: bold;
   }
   .switch{
     width: 18px;

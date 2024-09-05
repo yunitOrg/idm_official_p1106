@@ -3,7 +3,8 @@
     <div class="tree-ul">
       <div class="tree-box" v-for="(file, subindex) in item.children" :key="subindex">
         <div class="flex" :class="{
-          'tree-child-title': !file.children || (file.children && file.children.length == 0)
+          'tree-child': (!file.children || file.children.length == 0) && (subindex+1 != item.children.length),
+          'tree-child-title': subindex+1 == item.children.length && (!file.children || (file.children && file.children.length == 0))
           }">
           <span class="icon" :class="{
             'switch': file.children && file.children.length,
