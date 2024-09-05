@@ -435,7 +435,7 @@ export default {
     content: "";
     display: inline-block;
     width: 21px;
-    height: 28px;
+    height: 31px;
     background-image: url('../assets/metro.png');
     background-repeat: no-repeat;
     cursor: pointer;
