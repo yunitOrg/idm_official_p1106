@@ -192,7 +192,7 @@ export default {
       {
         name: '发文',
         value: '2305262001457EcjMOO9fUw7XxwWltG',
-        url: 'https://www.baidu.com/',
+        url: '',
         children: [
             {
               name: '党组',
